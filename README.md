@@ -6,3 +6,7 @@ Simply install using the palette in node-red.
 
 ### Creds
 I have used `node-red-contrib-mqtt-env` as a raw base for this node. Thank you.
+
+# Version
+This is a fork of `node-red-contrib-mqtt-dynamictopic`
+=> correct multi subscriptions usage and unsubscriptions.

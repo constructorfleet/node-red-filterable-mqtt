@@ -27,8 +27,10 @@
 
 <script type="text/x-red" data-help-name="mqtt-dynamic in">
     <p>MQTT dynamic topic input node. Connects to a broker and subscribes to the topic specified in <b>msg.topic</b>. The topic may contain MQTT wildcards.</p>
+    <p>If msg.topic is null, unsubscribe previous topic</p>
     <p>Outputs an object called <b>msg</b> containing <b>msg.topic, msg.payload, msg.qos</b> and <b>msg.retain</b>.</p>
     <p><b>msg.payload</b> is usually a string, but can also be a binary buffer.</p>
+    <p> fork by FredThx</p>
 </script>
 
 <script type="text/javascript">

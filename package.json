@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-mqtt-dynamictopic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Default MQTT in node, but with msg.topic support.",
   "main": "mqtt-dynamic.js",
   "directories": {
@@ -25,10 +25,10 @@
       "mqtt-dynamic": "mqtt-dynamic.js"
     }
   },
-  "author": "xTheRamon",
+  "author": "xTheRamon + FredThx",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/xTheRamon/node-red-contrib-mqtt-dynamictopic/issues"
+    "url": "https://github.com/FredThx/node-red-contrib-mqtt-dynamictopic/issues"
   },
-  "homepage": "https://github.com/xTheRamon/node-red-contrib-mqtt-dynamictopic#readme"
+  "homepage": "https://github.com/FredThx/node-red-contrib-mqtt-dynamictopic#readme"
 }

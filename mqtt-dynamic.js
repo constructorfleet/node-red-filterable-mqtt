@@ -45,20 +45,26 @@ module.exports = function(RED) {
         if (this.brokerConfig)
         {
             this.on('input', function(msg) {
-                if (msg.topic && msg.topic.length > 0) {
-                    this.topic = msg.topic;
-                }
+              var node = this;
 
                 if (this.client) {
-                    this.client.disconnect();
+                    if (this.topic){
+                        this.client.unsubscribe(node, this.topic);
+                    }
+                    //this.client.disconnect();
+                } else {
+                  this.client = connectionPool.get(this.brokerConfig.broker,this.brokerConfig.port,this.brokerConfig.clientid,this.brokerConfig.username,this.brokerConfig.password);
+                }
+                if (msg.topic && msg.topic.length > 0) {
+                    this.topic = msg.topic;
+                } else{
+                  this.topic = null;
                 }
 
                 this.status({fill:"red",shape:"ring",text:"disconnected"});
 
-                this.client = connectionPool.get(this.brokerConfig.broker,this.brokerConfig.port,this.brokerConfig.clientid,this.brokerConfig.username,this.brokerConfig.password);
-                var node = this;
                 if (this.topic) {
-                    this.client.subscribe(this.topic,2,function(topic,payload,qos,retain) {
+                    this.client.subscribe(node,this.topic,2,function(topic,payload,qos,retain) {
                         if (isUtf8(payload)) { payload = payload.toString(); }
                         var msg = {topic:topic,payload:payload,qos:qos,retain:retain};
                         if ((node.brokerConfig.broker === "localhost")||(node.brokerConfig.broker === "127.0.0.1")) {
@@ -72,10 +78,12 @@ module.exports = function(RED) {
                     this.client.on("connect",function() {
                         node.status({fill:"green",shape:"dot",text:"connected"});
                     });
-                    this.client.connect();
+                    if (!this.client.isConnected()){
+                      this.client.connect();
+                    }
                 }
                 else {
-                    this.error("topic not defined");
+                    this.status({fill:"red",shape:"ring",text:"deleted"});
                 }
             });
         } else {
