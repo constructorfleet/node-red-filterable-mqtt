@@ -24,7 +24,7 @@
   ],
   "node-red": {
     "nodes": {
-      "mqtt-filter": "mqtt-filtter.js"
+      "mqtt-filter": "mqtt-filter.js"
     }
   },
   "author": "Teagan42",
