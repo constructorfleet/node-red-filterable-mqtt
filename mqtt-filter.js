@@ -31,7 +31,7 @@ module.exports = function (RED) {
         }
     }
 
-    RED.nodes.registerType("mqtt-dynamic-broker", MQTTBrokerNode, {
+    RED.nodes.registerType("mqtt-broker", MQTTBrokerNode, {
         credentials: {
             user: {type: "text"},
             password: {type: "password"}
@@ -53,7 +53,13 @@ module.exports = function (RED) {
                     }
                     //this.client.disconnect();
                 } else {
-                    this.client = connectionPool.get(this.brokerConfig.broker, this.brokerConfig.port, this.brokerConfig.clientid, this.brokerConfig.username, this.brokerConfig.password);
+                    this.client =
+                        connectionPool.get(
+                            this.brokerConfig.broker,
+                            this.brokerConfig.port,
+                            this.brokerConfig.clientid,
+                            this.brokerConfig.username,
+                            this.brokerConfig.password);
                 }
                 if (msg.topic && msg.topic.length > 0) {
                     this.topic = msg.topic;
@@ -68,7 +74,7 @@ module.exports = function (RED) {
                         if (isUtf8(payload)) {
                             payload = payload.toString();
                         }
-                        var msg = {topic: topic, payload: payload, qos: qos, retain: retain};
+                        const msg = {topic: topic, payload: payload, qos: qos, retain: retain};
                         if ((node.brokerConfig.broker === "localhost") || (node.brokerConfig.broker === "127.0.0.1")) {
                             msg._topic = topic;
                         }
@@ -97,5 +103,5 @@ module.exports = function (RED) {
         });
     }
 
-    RED.nodes.registerType("mqtt-dynamic in", MQTTInNode);
-}
+    RED.nodes.registerType("mqtt-filter in", MQTTInNode);
+};
