@@ -13,6 +13,7 @@
     "mqtt": "0.3.x",
     "is-utf8": "0.2.0"
   },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/constructorfleet/node-red-filterable-mqtt.git"

@@ -16,12 +16,12 @@
 
 module.exports = function (RED) {
     "use strict";
-    var connectionPool = require("./lib/mqttConnectionPool");
-    var isUtf8 = require('is-utf8');
-    var util = require("util");
+    const connectionPool = require("./lib/mqttConnectionPool");
+    const isUtf8 = require('is-utf8');
+    const util = require("util");
 
     function MQTTBrokerNode(n) {
-        RED.nodes.createNode(this, n);
+        RED.nodes.createNbode(this, n);
         this.broker = n.broker;
         this.port = n.port;
         this.clientid = n.clientid;
