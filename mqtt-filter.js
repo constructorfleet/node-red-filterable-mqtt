@@ -14,14 +14,14 @@
  * limitations under the License.
  **/
 
-module.exports = function(RED) {
+module.exports = function (RED) {
     "use strict";
     var connectionPool = require("./lib/mqttConnectionPool");
     var isUtf8 = require('is-utf8');
     var util = require("util");
 
     function MQTTBrokerNode(n) {
-        RED.nodes.createNode(this,n);
+        RED.nodes.createNode(this, n);
         this.broker = n.broker;
         this.port = n.port;
         this.clientid = n.clientid;
@@ -30,70 +30,72 @@ module.exports = function(RED) {
             this.password = this.credentials.password;
         }
     }
-    RED.nodes.registerType("mqtt-dynamic-broker",MQTTBrokerNode,{
+
+    RED.nodes.registerType("mqtt-dynamic-broker", MQTTBrokerNode, {
         credentials: {
-            user: {type:"text"},
+            user: {type: "text"},
             password: {type: "password"}
         }
     });
 
     function MQTTInNode(n) {
-        RED.nodes.createNode(this,n);
+        RED.nodes.createNode(this, n);
         this.broker = n.broker;
         this.topic = "";
         this.brokerConfig = RED.nodes.getNode(this.broker);
-        if (this.brokerConfig)
-        {
-            this.on('input', function(msg) {
-              var node = this;
+        if (this.brokerConfig) {
+            this.on('input', function (msg) {
+                var node = this;
 
                 if (this.client) {
-                    if (this.topic){
+                    if (this.topic) {
                         this.client.unsubscribe(node, this.topic);
                     }
                     //this.client.disconnect();
                 } else {
-                  this.client = connectionPool.get(this.brokerConfig.broker,this.brokerConfig.port,this.brokerConfig.clientid,this.brokerConfig.username,this.brokerConfig.password);
+                    this.client = connectionPool.get(this.brokerConfig.broker, this.brokerConfig.port, this.brokerConfig.clientid, this.brokerConfig.username, this.brokerConfig.password);
                 }
                 if (msg.topic && msg.topic.length > 0) {
                     this.topic = msg.topic;
-                } else{
-                  this.topic = null;
+                } else {
+                    this.topic = null;
                 }
 
-                this.status({fill:"red",shape:"ring",text:"disconnected"});
+                this.status({fill: "red", shape: "ring", text: "disconnected"});
 
                 if (this.topic) {
-                    this.client.subscribe(node,this.topic,2,function(topic,payload,qos,retain) {
-                        if (isUtf8(payload)) { payload = payload.toString(); }
-                        var msg = {topic:topic,payload:payload,qos:qos,retain:retain};
-                        if ((node.brokerConfig.broker === "localhost")||(node.brokerConfig.broker === "127.0.0.1")) {
+                    this.client.subscribe(node, this.topic, 2, function (topic, payload, qos, retain) {
+                        if (isUtf8(payload)) {
+                            payload = payload.toString();
+                        }
+                        var msg = {topic: topic, payload: payload, qos: qos, retain: retain};
+                        if ((node.brokerConfig.broker === "localhost") || (node.brokerConfig.broker === "127.0.0.1")) {
                             msg._topic = topic;
                         }
                         node.send(msg);
                     });
-                    this.client.on("connectionlost",function() {
-                        node.status({fill:"red",shape:"ring",text:"disconnected"});
+                    this.client.on("connectionlost", function () {
+                        node.status({fill: "red", shape: "ring", text: "disconnected"});
                     });
-                    this.client.on("connect",function() {
-                        node.status({fill:"green",shape:"dot",text:"connected"});
+                    this.client.on("connect", function () {
+                        node.status({fill: "green", shape: "dot", text: "connected"});
                     });
-                    if (!this.client.isConnected()){
-                      this.client.connect();
+                    if (!this.client.isConnected()) {
+                        this.client.connect();
                     }
-                }
-                else {
-                    this.status({fill:"red",shape:"ring",text:"deleted"});
+                } else {
+                    this.status({fill: "red", shape: "ring", text: "deleted"});
                 }
             });
         } else {
             this.error("missing broker configuration");
         }
-        this.on('close', function() {
+        this.on('close', function () {
             if (this.client) {
                 this.client.disconnect();
             }
         });
     }
-    RED.nodes.registerType("mqtt-dynamic in",MQTTInNode);
+
+    RED.nodes.registerType("mqtt-dynamic in", MQTTInNode);
 }
